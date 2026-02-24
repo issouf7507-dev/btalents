@@ -22,8 +22,8 @@ const cardVariants = cva(
   }
 );
 
-// Interface for component props
-export interface BlogPostCardProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {
+// Interface for component props (omit props that conflict with framer-motion's motion.div)
+export interface BlogPostCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'>, VariantProps<typeof cardVariants> {
   tag: string;
   date: string;
   title: string;
@@ -35,17 +35,17 @@ export interface BlogPostCardProps extends React.HTMLAttributes<HTMLDivElement>,
 
 const BlogPostCard = React.forwardRef<HTMLDivElement, BlogPostCardProps>(
   ({ className, variant, tag, date, title, description, imageUrl, href, readMoreText = 'Lire la suite', ...props }, ref) => {
-
+    
     // Animation variants for framer-motion
     const cardHover = {
       hover: {
         y: -5,
         transition: {
           duration: 0.2,
-          ease: 'easeInOut',
+          ease: 'easeInOut' as const,
         },
       },
-    };
+    } as const;
 
     const content = (
       <>

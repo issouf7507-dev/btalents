@@ -15,11 +15,12 @@ import { prisma as db } from "@/lib/prisma";
  */
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const article = await db.article.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: { id: true },
     });
 
@@ -31,7 +32,7 @@ export async function POST(
     }
 
     const updated = await db.article.update({
-      where: { id: params.id },
+      where: { id },
       data: { views: { increment: 1 } },
       select: { views: true },
     });
