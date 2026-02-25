@@ -1,17 +1,23 @@
 services:
   nextjs:
+    # On définit le fichier d'environnement ici aussi
+    env_file:
+      - .env.production
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        DATABASE_URL: ${DATABASE_URL}
+        # Docker ira chercher la valeur dans .env.production si lancé avec l'option --env-file
+        - DATABASE_URL=${DATABASE_URL}
     container_name: btalents
     restart: always
     ports:
       - "3005:3000"
-    env_file:
-      - .env.production
     extra_hosts:
-      - "host.docker.internal:host-gateway" # permet d'accéder à MySQL sur - le host de docker
-    command: >
-      "sh -c "node_modules/.bin/prisma migrate deploy && node server.js""
+      - "host.docker.internal:host-gateway"
+    # Utilisation de npx pour plus de fiabilité sur le chemin de prisma
+    command:
+      ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node server.js"]
+
+# ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node server.js"]
+
