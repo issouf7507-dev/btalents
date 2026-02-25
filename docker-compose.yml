@@ -1,23 +1,26 @@
 services:
   nextjs:
-    # On définit le fichier d'environnement ici aussi
+    container_name: btalents
+    restart: always
+    # Charge les variables pour Docker Compose lui-même
     env_file:
       - .env.production
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        # Docker ira chercher la valeur dans .env.production si lancé avec l'option --env-file
+        # Transmet la variable au moment du build (pour pnpm build / prisma generate)
         - DATABASE_URL=${DATABASE_URL}
-    container_name: btalents
-    restart: always
+    # Transmet les variables au conteneur au moment de l'exécution (RUNTIME)
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - BETTER_AUTH_BASE_URL=${BETTER_AUTH_BASE_URL}
+      - NODE_ENV=production
     ports:
       - "3005:3000"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # Utilisation de npx pour plus de fiabilité sur le chemin de prisma
-    command:
-      ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node server.js"]
-
-# ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node server.js"]
-
+    # Utilisation de pnpm pour lancer la migration avant de démarrer le serveur
+    command: >
+      sh -c "pnpm prisma migrate deploy && node server.js"
