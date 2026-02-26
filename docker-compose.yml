@@ -1,19 +1,24 @@
+# Avec sudo, utiliser un chemin absolu pour que le conteneur reçoive bien les variables :
+#   sudo BTALENTS_ENV=/home/admin_marabu/apps/btalents/.env.production docker compose --env-file .env.production up -d --build
 services:
   nextjs:
     container_name: btalents
     restart: always
-    # On charge tout le fichier ici
     env_file:
-      - .env.production
+      - ${BTALENTS_ENV:-.env.production}
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-}
+      - BETTER_AUTH_BASE_URL=${BETTER_AUTH_BASE_URL:-}
+      - BETTER_AUTH_URL=${BETTER_AUTH_URL:-}
+      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-}
     build:
       context: .
       dockerfile: Dockerfile
-      # Si ton Dockerfile a vraiment besoin de DATABASE_URL pendant le build (npm run build)
-      # garde cette ligne, sinon tu peux l'enlever pour simplifier.
       args:
-        - DATABASE_URL=${DATABASE_URL}
+        - DATABASE_URL=${DATABASE_URL:-}
     ports:
-      - "3005:3000"
+      - "3005:3005"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: >

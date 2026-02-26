@@ -36,6 +36,11 @@ COPY --from=builder /app/prisma ./prisma
 # 👇 Ajout : copier node_modules pour avoir le CLI prisma au démarrage
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 
+
+# 👇 Ajouter ces deux lignes
+COPY --chown=nextjs:nodejs entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3005
