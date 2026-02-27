@@ -1,10 +1,10 @@
-module.exports = {
+export default {
   apps: [
     {
       name: "ecom",
       script: "pnpm",
       args: "start",
-      cwd: __dirname,
+      cwd: new URL(".", import.meta.url).pathname,
       instances: 1,
       exec_mode: "fork",
       autorestart: true,
@@ -13,7 +13,7 @@ module.exports = {
       node_args: "--max-old-space-size=896",
       env: {
         NODE_ENV: "production",
-        PORT: 3005, // ✅ ici
+        PORT: 3005,
       },
       error_file: "./logs/error.log",
       out_file: "./logs/out.log",
