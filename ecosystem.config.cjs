@@ -1,10 +1,10 @@
-export default {
+module.exports = {
   apps: [
     {
       name: "ecom",
       script: "pnpm",
       args: "start",
-      cwd: new URL(".", import.meta.url).pathname,
+      cwd: __dirname,
       instances: 1,
       exec_mode: "fork",
       autorestart: true,
